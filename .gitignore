@@ -1,0 +1,12 @@
+staticfiles/
+
+local-cdn/
+
+.DS_store
+star/
+
+cfehome/__pycache__/
+visits/__pycache__/
+
+*.py[cod]
+*$py.class
