@@ -18,7 +18,7 @@ from django.urls import path, include
 from .views import home_view, about_view
 from auth.views import login_view, register_view
 urlpatterns = [
-    path ('', home_view),
+    path ('', home_view, name='home'),
     path('login/', login_view),
     path('register/', register_view),
     path('about/', about_view),
