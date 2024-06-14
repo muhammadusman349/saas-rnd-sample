@@ -1,5 +1,7 @@
-Django==3.2.25
+Django==4.2.13
 requests
 whitenoise
 python-decouple
 django-allauth[socialaccount]
+django-allauth-ui
+django-widget-tweaks
