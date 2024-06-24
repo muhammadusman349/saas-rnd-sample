@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block head-title %}Users- {{ block.super }}{% endblock head-title %}
+
+
+{% block content %}
+<h1 class="text-lg font-medium">Users</h1>
+
+    {% if perm.auth %}
+    <div>
+    {% for instance in object_list %}
+    <li><a href="/profiles/{{instance.username}}">{{instance.username}}</a></li>
+    {% endfor %}
+    </div>
+    {% endif %}
+{% endblock content %}
