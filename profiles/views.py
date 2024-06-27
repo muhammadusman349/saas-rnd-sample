@@ -23,3 +23,19 @@ def profile_view(request, username=None, *args, **kwargs):
             pass
             # qs = PageVisits.objects.all()
     return HttpResponse(f"Hello there {username} - {profile_user_obj.id} - {user.id} - {is_me}")
+
+@login_required
+def profile_detail_view(request, username=None, *args, **kwargs):
+    user = request.user
+    user_groups = user.groups.all()
+    print("user_groups", user_groups)
+    if user_groups.filter(name__icontains='basic').exists():
+        return HttpResponse("congrats")
+    profile_user_obj = get_object_or_404(User, username=username)
+    is_me = profile_user_obj == user
+    context = {
+        "object": profile_user_obj,
+        "instance": profile_user_obj,
+        "owner": is_me,
+    }
+    return render(request, "profiles/detail.html", context)

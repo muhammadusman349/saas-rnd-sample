@@ -5,11 +5,15 @@
 {% block content %}
 <h1 class="text-lg font-medium">Users</h1>
 
-    {% if perm.auth %}
+    {% if perms.auth %}
+    {% if perms.auth.view_user %}
     <div>
-    {% for instance in object_list %}
-    <li><a href="/profiles/{{instance.username}}">{{instance.username}}</a></li>
-    {% endfor %}
+        {% for instance in object_list %}
+        <li><a href="/profiles/{{instance.username}}">{{instance.username}}</a></li>
+        {% endfor %}
     </div>
+    {% else %}
+    <div> You are not allowed to see this</div>
     {% endif %}
+{% endif %}
 {% endblock content %}
