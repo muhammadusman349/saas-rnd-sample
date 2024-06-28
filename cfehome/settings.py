@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     # my-apps
     'visits',
     'commando',
+    'profiles',
+    'subscriptions',
     # third-party-apps
     'allauth_ui',
     'allauth',
@@ -216,3 +218,9 @@ if all([ADMIN_USER_NAME, ADMIN_USER_EMAIL]):
         (f'{ADMIN_USER_NAME}', f'{ADMIN_USER_EMAIL}')
     ]
     MANAGERS=ADMINS
+
+"""
+Celery workers are worker processes that run tasks independently from one another and outside the context of your main service. 
+Celery beat is a scheduler that orchestrates when to run tasks.
+
+"""
