@@ -41,6 +41,7 @@ def user_sub_post_save(sender, instance, *args, **kwargs):
     user_sub_instance = instance
     user = user_sub_instance.user
     subscription_obj = user_sub_instance.subscription
+    groups_ids = []
     if subscription_obj is not None:
         groups = subscription_obj.groups.all()
         groups_ids = groups.values_list('id', flat=True)
