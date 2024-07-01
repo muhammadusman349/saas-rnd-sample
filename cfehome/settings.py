@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'commando',
     'profiles',
     'subscriptions',
+    'customers',
     # third-party-apps
     'allauth_ui',
     'allauth',
@@ -219,8 +220,16 @@ if all([ADMIN_USER_NAME, ADMIN_USER_EMAIL]):
     ]
     MANAGERS=ADMINS
 
-"""
-Celery workers are worker processes that run tasks independently from one another and outside the context of your main service. 
-Celery beat is a scheduler that orchestrates when to run tasks.
+# """
+# Celery workers are worker processes that run tasks independently from one another and outside the context of your main service. 
+# Celery beat is a scheduler that orchestrates when to run tasks.
 
-"""
+# """
+
+# Software as a Service (SaaS) is a software distribution model that lets customers and companies interact through web-enabled devices 
+# such as laptops, smartphones, and other Internet-enabled devices, 
+# making it extremely convenient to access and store cloud data.
+
+# Software as a Service (SaaS) is like renting software online. You use it through the internet instead of downloading it on your computer. 
+# You pay a regular fee to use it, and the company takes care of updates and fixes. 
+# You can use it from any device with internet. Examples are Google Docs, Microsoft 365, and Netflix.
