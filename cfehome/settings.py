@@ -189,36 +189,36 @@ STORAGES = {
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Email Config
-# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-# EMAIL_HOST = config("EMAIL_HOST", default="smtp.gmail.com")
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_USE_SSL = False
-# EMAIL_HOST_USER = 'm.maher0044@gmail.com'
-# EMAIL_HOST_PASSWORD = "mhcv reyu oort gwjb"
-
-# ADMINS = [('Justin', 'muhammadusman67200@gmail.com')]
-# MANAGERS=ADMINS
-
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = config("EMAIL_HOST", cast=str, default="smtp.gmail.com")
-EMAIL_PORT = config("EMAIL_PORT", cast=str, default="587")
-EMAIL_HOST_USER = config("EMAIL_HOST_USER", cast=str, default=None)   #'hungrypy@gmail.com'
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", cast=str, default=None)  #"manage.py2020"
-EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool, default=True)
-EMAIL_USE_SSL = config("EMAIL_USE_SSL", cast=bool, default=False)
+EMAIL_HOST = config("EMAIL_HOST", default="smtp.gmail.com")
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = 'm.maher0044@gmail.com'
+EMAIL_HOST_PASSWORD = "iism mwih skiv gkfg"
 
-ADMIN_USER_NAME = config("ADMIN_USER_NAME", default="Admin user")
-ADMIN_USER_EMAIL = config("ADMIN_USER_EMAIL", default = None)
+ADMINS = [('usman', 'muhammadusman67200@gmail.com')]
+MANAGERS=ADMINS
 
-MANAGERS = []
-ADMINS = []
-if all([ADMIN_USER_NAME, ADMIN_USER_EMAIL]):
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_HOST = config("EMAIL_HOST", cast=str, default="smtp.gmail.com")
+# EMAIL_PORT = config("EMAIL_PORT", cast=str, default="587")
+# EMAIL_HOST_USER = config("EMAIL_HOST_USER", cast=str, default=None)   #'hungrypy@gmail.com'
+# EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", cast=str, default=None)  #"manage.py2020"
+# EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool, default=True)
+# EMAIL_USE_SSL = config("EMAIL_USE_SSL", cast=bool, default=False)
+
+# ADMIN_USER_NAME = config("ADMIN_USER_NAME", default="Admin user")
+# ADMIN_USER_EMAIL = config("ADMIN_USER_EMAIL", default = None)
+
+# MANAGERS = []
+# ADMINS = []
+# if all([ADMIN_USER_NAME, ADMIN_USER_EMAIL]):
     
-    ADMINS += [
-        (f'{ADMIN_USER_NAME}', f'{ADMIN_USER_EMAIL}')
-    ]
-    MANAGERS=ADMINS
+#     ADMINS += [
+#         (f'{ADMIN_USER_NAME}', f'{ADMIN_USER_EMAIL}')
+#     ]
+#     MANAGERS=ADMINS
 
 # """
 # Celery workers are worker processes that run tasks independently from one another and outside the context of your main service. 
