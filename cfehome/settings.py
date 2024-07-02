@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-e4l%v5nft6$j)+9jyje3#%$*xay%_%-59%rqbr(mn--+3*odbu
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+BASE_URL = config("BASE_URL", default=None)
 ALLOWED_HOSTS = [
         ".railway.app" # https://saas.prod.railway.app
 ]

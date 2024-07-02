@@ -3,7 +3,7 @@ from .models import *
 # Register your models here.
 
 
-class SubscriptionPriceAdmin(admin.TabularInline):
+class SubscriptionPriceAdmin(admin.StackedInline):
     model = SubscriptionPrice
     readonly_fields = ["stripe_id"]
     can_delete = False
@@ -17,4 +17,4 @@ class SubscriptionAdmin(admin.ModelAdmin):
 
 admin.site.register(Subscription, SubscriptionAdmin)
 admin.site.register(UserSubscription)
-admin.site.register(SubscriptionPrice)
+# admin.site.register(SubscriptionPrice)

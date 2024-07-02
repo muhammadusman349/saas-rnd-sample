@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import Group, Permission
 from django.db.models.signals import post_save
 from django.conf import settings
+from django.urls import reverse
 
 User = settings.AUTH_USER_MODEL # auth.User
 ALLOW_CUSTOM_GROUPS = True
@@ -22,17 +23,28 @@ class Subscription(models.Model):
     Subscription Plan = Stripe Product
     """
     name = models.CharField(max_length=120)
+    subtitle = models.TextField(blank=True, null=True)
     active = models.BooleanField(default=True)
     groups = models.ManyToManyField(Group)
     permissions = models.ManyToManyField(Permission, limit_choices_to = {"content_type__app_label":"subscriptions", 
                                                                          "codename__in": [x[0]for x in SUBSCRIPTION_PERMISSIONS]})
     stripe_id = models.CharField(max_length=120, null=True, blank=True)
-    
+    order = models.IntegerField(default=-1, help_text="Ordering on Django pricing page")
+    featured = models.BooleanField(default=True, help_text="Featured on Django pricing page")
+    updated = models.DateTimeField(auto_now=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    features = models.TextField(help_text="Features for pricing, seperated by new line", null=True, blank=True)
     
     def __str__(self):
         return str(self.name)
     
+    def get_features_as_list(self):
+        if not self.features:
+            return []
+        return [x.strip() for x in self.features.split("\n")]
+    
     class Meta:
+        ordering = ['order', 'featured', '-updated']
         permissions = SUBSCRIPTION_PERMISSIONS
     
     def save(self, *args, **kwargs):
@@ -90,9 +102,35 @@ class SubscriptionPrice(models.Model):
     interval = models.CharField(max_length=120, default=IntervalChoices.MONTHLY,
                                 choices=IntervalChoices.choices)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=99.99)
-    order = models.IntegerField(default=-1)
-    featured = models.BooleanField(default=True)
+    order = models.IntegerField(default=-1, help_text="Ordering on Django pricing page")
+    featured = models.BooleanField(default=True, help_text="Featured on Django pricing page")
+    updated = models.DateTimeField(auto_now=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
     
+    class Meta:
+        ordering = ['subscription__order', 'order', 'featured', '-updated']
+    
+    def get_checkout_url(self):
+        return reverse("sub-price-checkout", kwargs= {"price_id": self.id})
+    
+    @property
+    def display_features_list(self):
+        if not self.subscription:
+            return []
+        return self.subscription.get_features_as_list()
+    
+    @property
+    def display_sub_name(self):
+        if not self.subscription:
+            return "Plan"
+        return self.subscription.name
+
+    @property
+    def display_sub_subtitle(self):
+        if not self.subscription:
+            return "Plan"
+        return self.subscription.subtitle
+        
     @property
     def stripe_currency(self):
         return "usd"
@@ -121,3 +159,9 @@ class SubscriptionPrice(models.Model):
             )
             self.stripe_id = stripe_id
         super().save(*args, **kwargs)
+        if self.featured:
+            qs = SubscriptionPrice.objects.filter(
+                subscription = self.subscription,
+                interval = self.interval
+            ).exclude(id=self.id)
+            qs.update(featured=False)
