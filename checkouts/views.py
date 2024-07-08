@@ -45,7 +45,12 @@ def checkout_redirect_view(request):
 
 def checkout_finalize_view(request):
     session_id = request.GET.get('session_id')
-    customer_id, plan_id, sub_stripe_id = helpers.billing.get_checkout_customer_plan(session_id)
+    checkout_data = helpers.billing.get_checkout_customer_plan(session_id)
+    plan_id = checkout_data.pop('plan_id')
+    customer_id = checkout_data.pop('customer_id')
+    sub_stripe_id = checkout_data.pop('sub_stripe_id')
+    subscription_data = {**checkout_data}
+    
     try:
         sub_obj = Subscription.objects.get(subscriptionprice__stripe_id=plan_id)
     except:
@@ -56,11 +61,17 @@ def checkout_finalize_view(request):
         user_obj = None
     
     _user_sub_exists = False
+    _updated_sub_options = {
+        "subscription": sub_obj,
+        "stripe_id": sub_stripe_id,
+        "user_cancelled": False,
+        **subscription_data,
+    } 
     try:    
         _user_sub_obj = UserSubscription.objects.get(user=user_obj) 
         _user_sub_exists = True
     except UserSubscription.DoesNotExist:
-        _user_sub_obj = UserSubscription.objects.create(user=user_obj, subscription=sub_obj, stripe_id=sub_stripe_id)
+        _user_sub_obj = UserSubscription.objects.create(user=user_obj, **_updated_sub_options)
     except:
         _user_sub_obj = None
     if None in [sub_obj, user_obj, _user_sub_obj]:
@@ -68,10 +79,16 @@ def checkout_finalize_view(request):
     
     if _user_sub_exists:
         # cancel old sub
-        
+        old_stripe_id = _user_sub_obj.stripe_id
+        same_stripe_id = sub_stripe_id == old_stripe_id
+        if old_stripe_id is not None and not same_stripe_id:
+            try:
+                helpers.billing.cancel_subscription(old_stripe_id, reason="Auto ended new membership", feedback="other")
+            except:
+                pass
         # assign new sub
-        _user_sub_obj.subscription = sub_obj
-        _user_sub_obj.stripe_id = sub_stripe_id
+        for k, v in _updated_sub_options.items():
+            setattr(_user_sub_obj, k, v)
         _user_sub_obj.save()
     context = {}
     return render(request, "checkout/success.html", context)
