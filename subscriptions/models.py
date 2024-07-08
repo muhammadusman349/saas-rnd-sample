@@ -17,6 +17,16 @@ SUBSCRIPTION_PERMISSIONS = [
             
         ]
 
+class SubscriptionStatus(models.TextChoices):
+    ACTIVE = 'active', 'ACTIVE'
+    TRIALING = 'triaking', 'TRIALING'
+    INCOMPLETE = 'incomplete', 'INCOMPLETE'
+    INCOMPLETE_EXPIRED = 'incomplete_expired', 'INCOMPLETE_EXPIRED' 
+    PAST_DUE = 'past_due', 'PAST_DUE' 
+    CANCELLED = 'cancelled', 'CANCELLED'
+    UNPAID = 'unpaid', 'UNPAID' 
+    PAUSED = 'paused', 'PAUSED' 
+    
 # Create your models here.
 class Subscription(models.Model):
     """
@@ -55,16 +65,6 @@ class Subscription(models.Model):
         super().save(*args, **kwargs)
 
 class UserSubscription(models.Model):
-    class SubscriptionStatus(models.TextChoices):
-        ACTIVE = 'active', 'ACTIVE'
-        TRIALING = 'triaking', 'TRIALING'
-        INCOMPLETE = 'incomplete', 'INCOMPLETE'
-        INCOMPLETE_EXPIRED = 'incomplete_expired', 'INCOMPLETE_EXPIRED' 
-        PAST_DUE = 'past_due', 'PAST_DUE' 
-        CANCELLED = 'cancelled', 'CANCELLED'
-        UNPAID = 'unpaid', 'UNPAID' 
-        PAUSED = 'paused', 'PAUSED' 
-        
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     subscription = models.ForeignKey(Subscription, on_delete=models.SET_NULL, null=True, blank=True)
     stripe_id = models.CharField(max_length=120, null=True, blank=True)    
@@ -73,10 +73,18 @@ class UserSubscription(models.Model):
     original_period_start = models.DateTimeField(auto_now=False, auto_now_add=False, blank=True, null=True)
     current_period_start = models.DateTimeField(auto_now=False, auto_now_add=False, blank=True, null=True)
     current_period_end = models.DateTimeField(auto_now=False, auto_now_add=False, blank=True, null=True)
+    cancel_at_period_end = models.BooleanField(default=False)
     status = models.CharField(max_length=120, choices=SubscriptionStatus.choices, null=True, blank=True)
     
     def get_absolute_url(self):
         return reverse("user_subscription")
+
+    def get_cancel_url(self):
+        return reverse("user_subscription_cancel")
+        
+    @property
+    def is_active_status(self):
+        return self.status in [SubscriptionStatus.ACTIVE, SubscriptionStatus.TRIALING]
     
     @property
     def plan_name(self):
