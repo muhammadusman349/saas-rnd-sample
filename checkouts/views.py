@@ -45,7 +45,7 @@ def checkout_redirect_view(request):
 
 def checkout_finalize_view(request):
     session_id = request.GET.get('session_id')
-    customer_id, plan_id = helpers.billing.get_checkout_customer_plan(session_id)
+    customer_id, plan_id, sub_stripe_id = helpers.billing.get_checkout_customer_plan(session_id)
     try:
         sub_obj = Subscription.objects.get(subscriptionprice__stripe_id=plan_id)
     except:
@@ -60,7 +60,7 @@ def checkout_finalize_view(request):
         _user_sub_obj = UserSubscription.objects.get(user=user_obj) 
         _user_sub_exists = True
     except UserSubscription.DoesNotExist:
-        _user_sub_obj = UserSubscription.objects.create(user=user_obj, subscription=sub_obj)
+        _user_sub_obj = UserSubscription.objects.create(user=user_obj, subscription=sub_obj, stripe_id=sub_stripe_id)
     except:
         _user_sub_obj = None
     if None in [sub_obj, user_obj, _user_sub_obj]:
@@ -71,6 +71,7 @@ def checkout_finalize_view(request):
         
         # assign new sub
         _user_sub_obj.subscription = sub_obj
+        _user_sub_obj.stripe_id = sub_stripe_id
         _user_sub_obj.save()
     context = {}
     return render(request, "checkout/success.html", context)
