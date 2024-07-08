@@ -55,12 +55,57 @@ class Subscription(models.Model):
         super().save(*args, **kwargs)
 
 class UserSubscription(models.Model):
+    class SubscriptionStatus(models.TextChoices):
+        ACTIVE = 'active', 'ACTIVE'
+        TRIALING = 'triaking', 'TRIALING'
+        INCOMPLETE = 'incomplete', 'INCOMPLETE'
+        INCOMPLETE_EXPIRED = 'incomplete_expired', 'INCOMPLETE_EXPIRED' 
+        PAST_DUE = 'past_due', 'PAST_DUE' 
+        CANCELLED = 'cancelled', 'CANCELLED'
+        UNPAID = 'unpaid', 'UNPAID' 
+        PAUSED = 'paused', 'PAUSED' 
+        
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     subscription = models.ForeignKey(Subscription, on_delete=models.SET_NULL, null=True, blank=True)
+    stripe_id = models.CharField(max_length=120, null=True, blank=True)    
     active = models.BooleanField(default=True)
+    user_cancelled = models.BooleanField(default=False)
+    original_period_start = models.DateTimeField(auto_now=False, auto_now_add=False, blank=True, null=True)
+    current_period_start = models.DateTimeField(auto_now=False, auto_now_add=False, blank=True, null=True)
+    current_period_end = models.DateTimeField(auto_now=False, auto_now_add=False, blank=True, null=True)
+    status = models.CharField(max_length=120, choices=SubscriptionStatus.choices, null=True, blank=True)
     
-    # def __str__(self):
-    #     return str(self.user)
+    def get_absolute_url(self):
+        return reverse("user_subscription")
+    
+    @property
+    def plan_name(self):
+        if not self.subscription:
+            return None
+        return self.subscription.name
+    
+    def serialize(self):
+        return {
+            "plan_name":self.plan_name,
+            "status":self.status,
+            "current_period_start":self.current_period_start,
+            "current_period_end":self.current_period_end,
+        }
+    
+    @property
+    def billing_cycle_anchor(self):
+        """
+        https://docs.stripe.com/payments/checkout/billing-cycle
+        Optional delay to start new subscription in Stripe checkout 
+        """
+        if not self.current_period_end:
+            return None
+        return int(self.current_period_end.timestamp())
+    
+    def save(self, *args, **kwargs):
+        if (self.original_period_start is None and self.current_period_start is not None):
+            self.original_period_start = self.current_period_start
+        super().save(*args, **kwargs)
     
 def user_sub_post_save(sender, instance, *args, **kwargs):
     user_sub_instance = instance
