@@ -7,11 +7,17 @@
 <form action="" method="POST"> {% csrf_token %}
     <button type="submit" >Refresh</button>
 </form>
+
+<a href="{{subscription.get_cancel_url}}">Cancel Membership</a>
+
 <p>Plan Name: {{subscription.plan_name}}</p>
+
 <p>Status: {{subscription.status}}</p>
+
 <p>Membership age: {{subscription.original_period_start|timesince}}</p>
 
 <p>Start: {{subscription.current_period_start}}</p>
+
 <p>End: {{subscription.current_period_end|timeuntil}} ({{subscription.current_period_end}})</p>
 
 
