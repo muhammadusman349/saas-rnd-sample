@@ -23,10 +23,11 @@ from .views import (
         staff_only_view,
 )
 from auth.views import login_view, register_view
+from landing import views as landing_views
 from subscriptions import views as subscription_views
 from checkouts import views as checkout_views
 urlpatterns = [
-    path ('', home_view, name='home'),
+    path ('', landing_views.landing_page_view, name='home'),
     # path('login/', login_view),
     # path('register/', register_view),
     path('checkout/sub-price/<int:price_id>/', checkout_views.product_price_redirect_view, name='sub-price-checkout'),
