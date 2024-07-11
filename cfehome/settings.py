@@ -56,6 +56,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.github',
     'widget_tweaks', 
+    'django_celery_beat',
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -199,6 +201,10 @@ EMAIL_HOST_PASSWORD = "iism mwih skiv gkfg"
 
 ADMINS = [('usman', 'muhammadusman67200@gmail.com')]
 MANAGERS=ADMINS
+
+# Celery Configration
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
 
 # EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 # EMAIL_HOST = config("EMAIL_HOST", cast=str, default="smtp.gmail.com")
