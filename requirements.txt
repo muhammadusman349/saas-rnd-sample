@@ -13,3 +13,5 @@ django-celery-beat
 django-celery-results
 redis
 selenium
+bs4
+pandas
