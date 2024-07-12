@@ -7,7 +7,11 @@ django-allauth[socialaccount]
 django-allauth-ui
 django-widget-tweaks
 stripe
+# Extra implementation on this project 
 celery
 django-celery-beat
 django-celery-results
 redis
+selenium
+bs4
+pandas
